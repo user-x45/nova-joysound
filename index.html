@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOYSOUND NOVA (ジョイサウンド ノヴァ) | 次世代カラオケシステム公式</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        joyred: {
+                            DEFAULT: '#E60012',
+                            dark: '#A8000D',
+                            light: '#FF3344'
+                        },
+                        joydark: '#0B0D14',
+                        joycard: '#141824',
+                        joyaccent: '#00F0FF'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans JP"', 'sans-serif'],
+                        orbitron: ['"Orbitron"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B0D14;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+        .glow-red {
+            text-shadow: 0 0 20px rgba(232, 0, 18, 0.7), 0 0 40px rgba(232, 0, 18, 0.4);
+        }
+        .glow-cyan {
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.7);
+        }
+        .box-glow {
+            box-shadow: 0 0 30px -5px rgba(230, 0, 18, 0.3);
+        }
+        .glass-panel {
+            background: rgba(20, 24, 36, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0D14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D3748;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #E60012;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-100 selection:bg-joyred selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-panel border-b border-white/10 transition-all duration-300" id="mainHeader">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="bg-joyred text-white font-orbitron font-extrabold px-3 py-1 text-xl tracking-wider rounded group-hover:bg-joyred-light transition">
+                    JOYSOUND
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-orbitron font-extrabold text-2xl tracking-widest text-white flex items-center gap-1">
+                        NOVA <span class="text-joyred text-xs px-1.5 py-0.5 bg-joyred/20 border border-joyred/50 rounded font-sans">2027 NEW</span>
+                    </span>
+                    <span class="text-[10px] text-gray-400 font-sans tracking-tight">超・解像音響×生成AIカラオケ</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#concept" class="hover:text-joyred transition hover:underline underline-offset-8">コンセプト</a>
+                <a href="#features" class="hover:text-joyred transition hover:underline underline-offset-8">革新機能</a>
+                <a href="#scoring" class="hover:text-joyred transition hover:underline underline-offset-8">AI超・分析採点</a>
+                <a href="#simulator" class="hover:text-joyred transition hover:underline underline-offset-8">体験シミュレーター</a>
+                <a href="#specs" class="hover:text-joyred transition hover:underline underline-offset-8">スペック比較</a>
+            </nav>
+
+            <!-- Action CTA Button -->
+            <div class="hidden sm:flex items-center space-x-4">
+                <button onclick="openModal('storeModal')" class="bg-transparent hover:bg-white/10 border border-white/20 text-white text-xs px-4 py-2.5 rounded-full transition duration-300 flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-joyred"></i> 設置予定店舗
+                </button>
+                <button onclick="openModal('contactModal')" class="bg-joyred hover:bg-joyred-light text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-lg shadow-joyred/40 transition duration-300 transform hover:scale-105">
+                    店舗オーナー様導入相談
+                </button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button id="mobileMenuBtn" class="md:hidden text-gray-300 hover:text-white text-2xl focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-joydark/95 border-b border-white/10 px-6 py-4 space-y-4 text-center">
+            <a href="#concept" class="block text-gray-300 hover:text-joyred py-1">コンセプト</a>
+            <a href="#features" class="block text-gray-300 hover:text-joyred py-1">革新機能</a>
+            <a href="#scoring" class="block text-gray-300 hover:text-joyred py-1">AI超・分析採点</a>
+            <a href="#simulator" class="block text-gray-300 hover:text-joyred py-1">体験シミュレーター</a>
+            <a href="#specs" class="block text-gray-300 hover:text-joyred py-1">スペック比較</a>
+            <div class="pt-2 flex flex-col gap-2">
+                <button onclick="openModal('storeModal')" class="w-full bg-white/10 py-2 rounded-lg text-sm">設置予定店舗を探す</button>
+                <button onclick="openModal('contactModal')" class="w-full bg-joyred py-2 rounded-lg text-sm font-bold">導入のお問い合わせ</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen pt-28 pb-16 flex items-center justify-center overflow-hidden">
+        <!-- Background Animated Canvas -->
+        <canvas id="heroCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-40"></canvas>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-joydark/80 to-joydark z-0"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
+            
+            <!-- Catch badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-joyred/10 border border-joyred/40 text-joyred text-xs sm:text-sm font-semibold mb-6 animate-pulse">
+                <i class="fa-solid fa-sparkles"></i> JOYSOUND フラグシップ新機種 2027年春 誕生
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight mb-4 font-sans">
+                歌は、<span class="text-transparent bg-clip-text bg-gradient-to-r from-joyred via-red-400 to-joyaccent glow-red">超・空間体験</span>へ。
+            </h1>
+
+            <p class="text-gray-300 text-lg sm:text-2xl max-w-3xl mb-8 font-light leading-relaxed">
+                192kHz/32bitハイレゾ空間オーディオ ＆ リアルタイムAIステージビジュアライザー。<br class="hidden sm:inline">
+                「JOYSOUND NOVA」が、カラオケの常識をすべて過去にする。
+            </p>
+
+            <!-- Product Visual Hardware Preview Interactive Mock -->
+            <div class="w-full max-w-4xl my-8 relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-joyred via-joyaccent to-purple-600 rounded-3xl blur-2xl opacity-40 group-hover:opacity-75 transition duration-1000"></div>
+                
+                <div id="hardwareUnit" class="relative rounded-2xl bg-gradient-to-b from-gray-900 to-black border border-white/20 p-8 shadow-2xl flex flex-col items-center">
+                    
+                    <!-- Display Panel -->
+                    <div class="w-full h-48 sm:h-64 bg-black rounded-xl border-2 border-gray-800 p-4 relative overflow-hidden flex flex-col justify-between" id="screenDisplay">
+                        <!-- LED / Visualizer Simulation on Display -->
+                        <div class="absolute inset-0 opacity-30 bg-[radial-gradient(#E60012_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                        
+                        <div class="relative z-10 flex justify-between items-center text-xs text-gray-400 font-orbitron">
+                            <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span> ONLINE / 3D-AUDIO ACTIVE</span>
+                            <span>JOYSOUND-NOVA-X1000</span>
+                        </div>
+
+                        <!-- Main Screen Content -->
+                        <div class="relative z-10 text-center my-auto">
+                            <p class="text-joyaccent font-orbitron tracking-widest text-sm mb-1">NOW PLAYING SYSTEM DEMO</p>
+                            <h3 class="text-2xl sm:text-4xl font-bold text-white tracking-wider glow-cyan" id="nowPlayingText">JOYSOUND NOVA ENGINE</h3>
+                            <div class="flex justify-center items-center gap-1 mt-4" id="equalizerBars">
+                                <!-- Equalizer bars dynamically animated via JS -->
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 flex justify-between items-center text-[10px] text-gray-500 font-orbitron">
+                            <span>SAMPLE RATE: 192kHz / 32bit</span>
+                            <span>AI PROCESSED: 99.8% ACCURACY</span>
+                        </div>
+                    </div>
+
+                    <!-- Front Hardware Controls Panel -->
+                    <div class="w-full mt-6 grid grid-cols-3 sm:grid-cols-6 gap-3 items-center">
+                        <div class="col-span-1 bg-gray-900 p-2.5 rounded-lg border border-white/10 text-center">
+                            <span class="block text-[10px] text-gray-400">マイク音量</span>
+                            <span class="font-orbitron font-bold text-joyred">MAX 10</span>
+                        </div>
+                        <div class="col-span-1 bg-gray-900 p-2.5 rounded-lg border border-white/10 text-center">
+                            <span class="block text-[10px] text-gray-400">AIエコー</span>
+                            <span class="font-orbitron font-bold text-joyaccent">REAL-3D</span>
+                        </div>
+                        <div class="col-span-1 bg-gray-900 p-2.5 rounded-lg border border-white/10 text-center">
+                            <span class="block text-[10px] text-gray-400">キーコントロール</span>
+                            <span class="font-orbitron font-bold text-white">±0</span>
+                        </div>
+                        <div class="col-span-3 bg-gray-900 p-2.5 rounded-lg border border-white/10 flex items-center justify-between px-4">
+                            <span class="text-xs text-gray-300 font-medium">本体LEDカラー:</span>
+                            <div class="flex gap-2">
+                                <button onclick="setLedColor('red')" class="w-5 h-5 rounded-full bg-red-600 border border-white/50 focus:scale-125 transition"></button>
+                                <button onclick="setLedColor('cyan')" class="w-5 h-5 rounded-full bg-cyan-400 border border-white/50 focus:scale-125 transition"></button>
+                                <button onclick="setLedColor('purple')" class="w-5 h-5 rounded-full bg-purple-600 border border-white/50 focus:scale-125 transition"></button>
+                                <button onclick="setLedColor('gold')" class="w-5 h-5 rounded-full bg-amber-400 border border-white/50 focus:scale-125 transition"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-hand-pointer text-joyred"></i> ボタンを押して本体LEDカラーやデモ画面を体験できます</p>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                <a href="#simulator" class="bg-joyred hover:bg-joyred-light text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-joyred/30 transition transform hover:-translate-y-1 flex items-center justify-center gap-3 text-lg">
+                    <i class="fa-solid fa-play"></i> AI採点＆サウンド試聴デモ
+                </a>
+                <button onclick="openModal('pvModal')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-8 py-4 rounded-xl transition flex items-center justify-center gap-3 text-lg">
+                    <i class="fa-solid fa-circle-play text-joyred"></i> プロモーションPV再生
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Concept Section -->
+    <section id="concept" class="py-24 bg-joydark relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-joyred font-orbitron font-bold tracking-widest text-sm uppercase">DEVELOPMENT CONCEPT</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold mt-2 text-white">なぜ、今「JOYSOUND NOVA」なのか</h2>
+                <div class="w-20 h-1 bg-joyred mx-auto my-6 rounded-full"></div>
+                <p class="text-gray-400 text-lg">
+                    カラオケは「原曲に合わせて歌う場所」から「自分だけのライブステージを創り出す没入空間」へ。
+                    長年培った音源技術と最先端AIが融合し、歌う人の歓びを極限まで引き出します。
+                </p>
+            </div>
+
+            <!-- 3 Pillar Concepts -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Pillar 1 -->
+                <div class="glass-panel p-8 rounded-2xl hover:border-joyred/50 transition duration-500 group">
+                    <div class="w-16 h-16 rounded-2xl bg-joyred/10 border border-joyred/30 flex items-center justify-center text-joyred text-3xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-wave-square"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">192kHz/32bit 超解像音源</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        スタジオマスター音源レベルの密度。ヴォーカルの息づかい、生楽器の豊かな倍音まで再現する業界最高の「NOVA Sound Engine 2.0」を搭載。
+                    </p>
+                </div>
+
+                <!-- Pillar 2 -->
+                <div class="glass-panel p-8 rounded-2xl hover:border-joyaccent/50 transition duration-500 group">
+                    <div class="w-16 h-16 rounded-2xl bg-joyaccent/10 border border-joyaccent/30 flex items-center justify-center text-joyaccent text-3xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">AI音響・感性補正システム</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        歌い手の声量・音域・部屋の残響特性をAIがマイクロ秒単位で自動調整。誰でもまるでプロアーティストのような抜けの良い歌声を実現。
+                    </p>
+                </div>
+
+                <!-- Pillar 3 -->
+                <div class="glass-panel p-8 rounded-2xl hover:border-purple-500/50 transition duration-500 group">
+                    <div class="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-3xl mb-6 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-vr-cardboard"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">AI 3D空間映像ビジュアライザー</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        歌唱者の感情やピッチ、曲調に合わせて背景映像がリアルタイムで立体生成。歌詞の世界観に完全に包み込まれる新しい映像体験。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid Section -->
+    <section id="features" class="py-24 bg-joycard/50 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-joyaccent font-orbitron font-bold tracking-widest text-sm uppercase">REVOLUTIONARY FEATURES</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold mt-2 text-white">JOYSOUND NOVA 6つの新革新</h2>
+                <p class="text-gray-400 mt-4">歌う、ハモる、つながる。すべての瞬間がエンターテインメントに進化。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-6 rounded-2xl bg-joydark border border-white/10 hover:border-joyred/40 transition">
+                    <div class="text-joyred text-2xl mb-4"><i class="fa-solid fa-microphone-lines"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-2">MyVoice クローン・デュエット</h4>
+                    <p class="text-gray-400 text-sm">過去のベストパフォーマンスやあなたの理想のハモリボイスをAIが生成。自分自身と本格ハモリデュエットが可能に。</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-6 rounded-2xl bg-joydark border border-white/10 hover:border-joyred/40 transition">
+                    <div class="text-joyaccent text-2xl mb-4"><i class="fa-solid fa-globe"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-2">超低遅延「NOVA Connect」</h4>
+                    <p class="text-gray-400 text-sm">全国のカラオケルームやご自宅のアプリと超低遅延でリンク。遠く離れた友達と同一空間でバンド＆デュエットセッション。</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-6 rounded-2xl bg-joydark border border-white/10 hover:border-joyred/40 transition">
+                    <div class="text-purple-400 text-2xl mb-4"><i class="fa-solid fa-music"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-2">曲数世界最多 38万曲以上搭載</h4>
+                    <p class="text-gray-400 text-sm">東方系、VTuber、ボーカロイド、インディーズからアニソン・洋楽まで。新曲もリリース当日に即時ハイレゾ配信。</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="p-6 rounded-2xl bg-joydark border border-white/10 hover:border-joyred/40 transition">
+                    <div class="text-amber-400 text-2xl mb-4"><i class="fa-solid fa-sliders"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-2">プロモデル専用「NOVA DSP」</h4>
+                    <p class="text-gray-400 text-sm">グラフィックEQやマイクゲインをスマホの「キョクナビアプリ」から直感調整。本格的なDTMマスタリング品質。</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="p-6 rounded-2xl bg-joydark border border-white/10 hover:border-joyred/40 transition">
+                    <div class="text-green-400 text-2xl mb-4"><i class="fa-solid fa-camera-rotate"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-2">4K 120fps ライブ撮影機能</h4>
+                    <p class="text-gray-400 text-sm">ルーム内の広角カメラと連携。歌唱動画をスマホに即時転送し、SNSへそのまま4K高画質でシェア可能。</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="p-6 rounded-2xl bg-joydark border border-white/10 hover:border-joyred/40 transition">
+                    <div class="text-pink-400 text-2xl mb-4"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h4 class="text-lg font-bold text-white mb-2">推し活・ライブアリーナモード</h4>
+                    <p class="text-gray-400 text-sm">ペンライト型デバイスやルーム照明と連携し、東京ドーム級の演出や歓声サラウンドを完全再現。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Scoring Showcase -->
+    <section id="scoring" class="py-24 bg-joydark relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <div>
+                    <span class="text-joyred font-orbitron font-bold tracking-widest text-sm">EVOLVED SCORING ENGINE</span>
+                    <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-2 mb-6">
+                        AI分析採点 <span class="text-joyred">NOVA</span>
+                    </h2>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        従来の音程・抑揚の判定を超え、歌い手の「感情表現」「ビブラートの美しさ」「声質の倍音成分」「グルーヴ感」をAIが多次元解析。
+                    </p>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-joyred/20 text-joyred flex items-center justify-center font-bold flex-shrink-0 mt-1">1</div>
+                            <div>
+                                <h4 class="text-white font-bold">表現力・グルーヴ AIグラフィック</h4>
+                                <p class="text-gray-400 text-sm">リズムのタメや走りをミクロ単位で追従し、プロレベルの「タメ効き」を適正判定。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-joyred/20 text-joyred flex items-center justify-center font-bold flex-shrink-0 mt-1">2</div>
+                            <div>
+                                <h4 class="text-white font-bold">リアルタイムアドバイス音声アシスト</h4>
+                                <p class="text-gray-400 text-sm">歌唱中にAIボイスが「今のAメロのビブラート、完璧です！」とリアルタイム褒めアシスト。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-joyred/20 text-joyred flex items-center justify-center font-bold flex-shrink-0 mt-1">3</div>
+                            <div>
+                                <h4 class="text-white font-bold">全国ランク＆楽曲別「歌唱カルテ」</h4>
+                                <p class="text-gray-400 text-sm">採点終了後、スマホアプリにあなたの歌声の強みと克服ポイントの詳細レポートを送付。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Scoring Result Card Preview -->
+                <div class="glass-panel p-6 sm:p-8 rounded-3xl border-joyred/30 box-glow relative">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-xs font-orbitron text-gray-400">AI SCORING NOVA - RESULT DEMO</span>
+                        <span class="px-2.5 py-1 bg-joyred/20 border border-joyred text-joyred text-xs rounded font-bold">RANK SSS</span>
+                    </div>
+
+                    <div class="text-center py-4">
+                        <p class="text-gray-400 text-sm mb-1">【課題曲】 怪獣の花唄 / Vaundy</p>
+                        <div class="font-orbitron text-6xl sm:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-joyred via-amber-300 to-joyaccent">
+                            98.<span class="text-4xl">452</span>
+                        </div>
+                        <p class="text-xs text-joyaccent mt-2 font-orbitron"><i class="fa-solid fa-crown"></i> 全国第 3 位 / 14,290人中</p>
+                    </div>
+
+                    <!-- Radar Graph Simulation -->
+                    <div class="grid grid-cols-2 gap-3 my-6 text-xs font-medium">
+                        <div class="bg-joydark/80 p-3 rounded-lg border border-white/5 flex justify-between">
+                            <span class="text-gray-400">音程正確度</span>
+                            <span class="text-joyred font-bold font-orbitron">96.8%</span>
+                        </div>
+                        <div class="bg-joydark/80 p-3 rounded-lg border border-white/5 flex justify-between">
+                            <span class="text-gray-400">表現力・感情</span>
+                            <span class="text-joyaccent font-bold font-orbitron">99.1%</span>
+                        </div>
+                        <div class="bg-joydark/80 p-3 rounded-lg border border-white/5 flex justify-between">
+                            <span class="text-gray-400">ビブラート質</span>
+                            <span class="text-purple-400 font-bold font-orbitron">94.5%</span>
+                        </div>
+                        <div class="bg-joydark/80 p-3 rounded-lg border border-white/5 flex justify-between">
+                            <span class="text-gray-400">グルーヴ感</span>
+                            <span class="text-green-400 font-bold font-orbitron">97.2%</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-joyred/10 border border-joyred/30 rounded-xl text-xs text-gray-300 flex items-center gap-3">
+                        <i class="fa-solid fa-robot text-joyred text-xl"></i>
+                        <span>AI評: 「サビでの倍音成分が非常に豊かです。高音への抜け感がプロレベルの仕上がりです！」</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Audio & Scoring Simulator Section -->
+    <section id="simulator" class="py-24 bg-joycard relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-joyaccent font-orbitron font-bold tracking-widest text-sm">INTERACTIVE DEMO</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-2">NOVA サウンド＆AI採点 シミュレーター</h2>
+                <p class="text-gray-400 mt-4">曲を選択し、JOYSOUND NOVAの音響エフェクトやAI採点を画面上で疑似体験してください。</p>
+            </div>
+
+            <div class="glass-panel p-6 sm:p-10 rounded-3xl border border-white/10 max-w-4xl mx-auto">
+                <!-- Song Selection -->
+                <div class="mb-8">
+                    <label class="block text-xs font-orbitron text-gray-400 mb-3">デモ楽曲の選択</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="songSelector">
+                        <button onclick="selectSong(0)" class="song-btn p-4 rounded-xl bg-joydark border border-joyred text-left transition flex flex-col justify-between" id="song-0">
+                            <span class="font-bold text-white block truncate">アイドル / YOASOBI</span>
+                            <span class="text-xs text-gray-400 mt-2">Pop / High Pitch</span>
+                        </button>
+                        <button onclick="selectSong(1)" class="song-btn p-4 rounded-xl bg-joydark border border-white/10 text-left transition flex flex-col justify-between" id="song-1">
+                            <span class="font-bold text-white block truncate">ドライフラワー / 優里</span>
+                            <span class="text-xs text-gray-400 mt-2">Ballad / Acoustic</span>
+                        </button>
+                        <button onclick="selectSong(2)" class="song-btn p-4 rounded-xl bg-joydark border border-white/10 text-left transition flex flex-col justify-between" id="song-2">
+                            <span class="font-bold text-white block truncate">新時代 / Ado</span>
+                            <span class="text-xs text-gray-400 mt-2">Rock / High Power</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Control Console -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Audio Effects -->
+                    <div class="bg-joydark/80 p-5 rounded-2xl border border-white/5 space-y-4">
+                        <h4 class="text-sm font-bold text-joyaccent flex items-center gap-2">
+                            <i class="fa-solid fa-sliders"></i> NOVA サウンドプロセッサー
+                        </h4>
+                        
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-400">3D Immersive Echo</span>
+                                <span class="text-joyaccent font-orbitron" id="echoValue">75%</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="75" class="w-full accent-joyaccent cursor-pointer" oninput="document.getElementById('echoValue').innerText = this.value + '%'">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-400">AI Voice Clarity (ボーカル補正)</span>
+                                <span class="text-joyaccent font-orbitron" id="clarityValue">90%</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="90" class="w-full accent-joyaccent cursor-pointer" oninput="document.getElementById('clarityValue').innerText = this.value + '%'">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-400">KEY コントロール</span>
+                                <span class="text-white font-orbitron" id="keyValue">±0</span>
+                            </div>
+                            <div class="flex gap-2 mt-1">
+                                <button onclick="changeKey(-1)" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-bold text-sm">-</button>
+                                <button onclick="changeKey(0)" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-bold text-xs text-gray-400">RESET</button>
+                                <button onclick="changeKey(1)" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-bold text-sm">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Background Selector -->
+                    <div class="bg-joydark/80 p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-sm font-bold text-purple-400 flex items-center gap-2 mb-3">
+                                <i class="fa-solid fa-eye"></i> AI Stage Background
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <button onclick="setBgTheme('cyber')" class="p-2.5 rounded bg-purple-900/40 border border-purple-500/50 hover:bg-purple-900/80 text-white font-medium">Cyberpunk Arena</button>
+                                <button onclick="setBgTheme('galaxy')" class="p-2.5 rounded bg-blue-900/40 border border-blue-500/50 hover:bg-blue-900/80 text-white font-medium">Deep Galaxy</button>
+                                <button onclick="setBgTheme('sunset')" class="p-2.5 rounded bg-amber-900/40 border border-amber-500/50 hover:bg-amber-900/80 text-white font-medium">Neon Sunset</button>
+                                <button onclick="setBgTheme('live')" class="p-2.5 rounded bg-red-900/40 border border-red-500/50 hover:bg-red-900/80 text-white font-medium">Dome Live Stadium</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-lg bg-black/40 text-center text-xs text-gray-400" id="currentThemeDisplay">
+                            現在の背景: <span class="text-white font-bold">Cyberpunk Arena</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Trigger Play Area -->
+                <div class="bg-black/80 rounded-2xl p-6 border border-white/10 text-center relative overflow-hidden">
+                    <div id="simStatus" class="text-sm text-gray-400 mb-2 font-orbitron">READY FOR TEST SINGING</div>
+                    
+                    <!-- Sound Wave visualizer simulation -->
+                    <div class="h-16 flex items-center justify-center gap-1 my-4" id="simWave">
+                        <div class="w-1.5 bg-joyred h-4 rounded-full"></div>
+                        <div class="w-1.5 bg-joyred h-8 rounded-full"></div>
+                        <div class="w-1.5 bg-joyred h-12 rounded-full"></div>
+                        <div class="w-1.5 bg-joyred h-6 rounded-full"></div>
+                        <div class="w-1.5 bg-joyred h-10 rounded-full"></div>
+                        <div class="w-1.5 bg-joyred h-4 rounded-full"></div>
+                    </div>
+
+                    <div id="simScoreDisplay" class="hidden mb-4">
+                        <p class="text-xs text-gray-400">AI リアルタイム分析算出スコア</p>
+                        <p class="text-5xl font-extrabold text-joyaccent font-orbitron" id="simScoreText">97.820</p>
+                    </div>
+
+                    <button id="startSimBtn" onclick="runSimulation()" class="bg-joyred hover:bg-joyred-light text-white font-bold px-8 py-3.5 rounded-full shadow-lg shadow-joyred/40 transition transform active:scale-95 text-base">
+                        <i class="fa-solid fa-microphone"></i> AI演奏＆分析スタート
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specs Comparison Section -->
+    <section id="specs" class="py-24 bg-joydark relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-joyred font-orbitron font-bold tracking-widest text-sm">SPECIFICATIONS</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-2">従来の機種とのスペック比較</h2>
+                <p class="text-gray-400 mt-4">JOYSOUND史上最強のスペックが生み出す圧倒的違い。</p>
+            </div>
+
+            <!-- Responsive Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[640px]">
+                    <thead>
+                        <tr class="border-b border-white/10 text-sm">
+                            <th class="p-4 text-gray-400 font-normal">機能 / 項目</th>
+                            <th class="p-4 text-gray-400 font-normal">JOYSOUND MAX GO</th>
+                            <th class="p-4 text-gray-400 font-normal">JOYSOUND X1</th>
+                            <th class="p-4 text-white font-bold bg-joyred/10 border-t-2 border-joyred rounded-t-xl text-center">
+                                <span class="text-joyred font-orbitron text-base block">JOYSOUND NOVA</span>
+                                (本機 2027)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5 text-sm">
+                        <tr>
+                            <td class="p-4 font-bold text-white">搭載曲数</td>
+                            <td class="p-4 text-gray-300">約 34 万曲</td>
+                            <td class="p-4 text-gray-300">約 35.5 万曲</td>
+                            <td class="p-4 text-joyaccent font-bold bg-joyred/5 text-center">38 万曲以上（業界最多）</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">音質 / サンプリング</td>
+                            <td class="p-4 text-gray-300">192kHz/24bit</td>
+                            <td class="p-4 text-gray-300">192kHz/24bit + X-Sound</td>
+                            <td class="p-4 text-joyaccent font-bold bg-joyred/5 text-center">192kHz/32bit 超ハイレゾ 3D</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">採点エンジン</td>
+                            <td class="p-4 text-gray-300">分析採点マスター</td>
+                            <td class="p-4 text-gray-300">AI分析採点</td>
+                            <td class="p-4 text-joyaccent font-bold bg-joyred/5 text-center">AI超・分析採点 NOVA (感情・倍音解析)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">背景映像生成</td>
+                            <td class="p-4 text-gray-400">固定HD映像</td>
+                            <td class="p-4 text-gray-300">4K映像コンテンツ</td>
+                            <td class="p-4 text-joyaccent font-bold bg-joyred/5 text-center">リアルタイムAI 3D空間描画</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">オンラインセッション</td>
+                            <td class="p-4 text-gray-400">非対応</td>
+                            <td class="p-4 text-gray-300">うたスキセッション</td>
+                            <td class="p-4 text-joyaccent font-bold bg-joyred/5 text-center">超低遅延 NOVA Connect (最大16元中継)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-white">マイク音声補正</td>
+                            <td class="p-4 text-gray-300">標準DSPエコー</td>
+                            <td class="p-4 text-gray-300">ハイレゾイコライザ</td>
+                            <td class="p-4 text-joyaccent font-bold bg-joyred/5 text-center">AIリアルタイムボイスクローン/ハモリ生成</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Peripheral Devices Section -->
+    <section class="py-20 bg-joycard/30 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-gray-400 font-orbitron text-xs">NOVA SYSTEM PERIPHERALS</span>
+                <h3 class="text-2xl sm:text-4xl font-bold text-white mt-1">周波数を解き放つ、最新周辺機器</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Kyokunavi NOVA -->
+                <div class="glass-panel p-8 rounded-2xl flex flex-col sm:flex-row gap-6 items-center">
+                    <div class="w-24 h-32 bg-gray-900 border border-white/20 rounded-xl flex items-center justify-center text-4xl text-joyred shadow-inner flex-shrink-0">
+                        <i class="fa-solid fa-tablet-screen-button"></i>
+                    </div>
+                    <div>
+                        <span class="text-joyred text-xs font-bold font-orbitron">JR-NOVA1000</span>
+                        <h4 class="text-xl font-bold text-white mt-1 mb-2">キョクナビ NOVA</h4>
+                        <p class="text-gray-400 text-sm">
+                            12.9インチ有機EL液晶搭載。超高速レスポンスで曲検索・キー変更はもちろん、手元でAI採点の詳細アナリティクスを確認可能。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Wireless Mic NOVA -->
+                <div class="glass-panel p-8 rounded-2xl flex flex-col sm:flex-row gap-6 items-center">
+                    <div class="w-24 h-32 bg-gray-900 border border-white/20 rounded-xl flex items-center justify-center text-4xl text-joyaccent shadow-inner flex-shrink-0">
+                        <i class="fa-solid fa-microphone"></i>
+                    </div>
+                    <div>
+                        <span class="text-joyaccent text-xs font-bold font-orbitron">WM-NOVA90</span>
+                        <h4 class="text-xl font-bold text-white mt-1 mb-2">ワイヤレスマイク NOVA-PRO</h4>
+                        <p class="text-gray-400 text-sm">
+                            超広帯域デジタル伝送ユニット。歌手の呼気音やハスキーな倍音まで余すことなく捉える超高感度コンデンサーヘッド採用。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <section class="py-16 bg-gradient-to-t from-joyred/20 to-joydark text-center relative border-t border-white/10">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">カラオケの未来を、あなたの店舗に。</h2>
+            <p class="text-gray-300 text-sm mb-8">2027年春より順次全国のカラオケ店舗・アミューズメント施設にて稼働開始予定。</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="openModal('contactModal')" class="bg-joyred hover:bg-joyred-light text-white font-bold px-8 py-4 rounded-full shadow-lg shadow-joyred/50 transition transform hover:scale-105">
+                    導入検討・見積依頼（店舗様向け）
+                </button>
+                <button onclick="openModal('storeModal')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-8 py-4 rounded-full transition">
+                    先行体験ロケテスト店舗一覧
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-joydark py-8 border-t border-white/5 text-gray-500 text-xs text-center">
+        <div class="max-w-7xl mx-auto px-4 space-y-4">
+            <p class="font-orbitron tracking-widest text-gray-400">JOYSOUND NEXT-GENERATION PROJECT</p>
+            <p>© XING INC. All Rights Reserved. (※このWebサイトはパロディ・コンセプトデザインです)</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- Store Locator Modal -->
+    <div id="storeModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full p-6 rounded-2xl border border-white/20 relative">
+            <button onclick="closeModal('storeModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-location-dot text-joyred"></i> 先行体験・ロケテスト店舗
+            </h3>
+            <p class="text-xs text-gray-400 mb-4">以下の先行導入店舗にて「JOYSOUND NOVA」の試奏が可能です。</p>
+            <div class="space-y-3 max-h-60 overflow-y-auto pr-2 text-xs">
+                <div class="p-3 bg-joydark rounded border border-white/10">
+                    <p class="font-bold text-white">JOYSOUND 渋谷南口駅前店 (先行設置)</p>
+                    <p class="text-gray-400">東京都渋谷区道玄坂1-3-2 / NOVA ROOM 3室増設</p>
+                </div>
+                <div class="p-3 bg-joydark rounded border border-white/10">
+                    <p class="font-bold text-white">JOYSOUND 心斎橋店</p>
+                    <p class="text-gray-400">大阪府大阪市中央区心斎橋筋1-5-6</p>
+                </div>
+                <div class="p-3 bg-joydark rounded border border-white/10">
+                    <p class="font-bold text-white">JOYSOUND 名古屋太閤通口店</p>
+                    <p class="text-gray-400">愛知県名古屋市中村区椿町15-2</p>
+                </div>
+            </div>
+            <button onclick="closeModal('storeModal')" class="w-full mt-6 bg-white/10 hover:bg-white/20 py-2.5 rounded-lg text-xs font-bold">閉じる</button>
+        </div>
+    </div>
+
+    <!-- PV Modal -->
+    <div id="pvModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-3xl w-full p-6 rounded-2xl border border-white/20 relative text-center">
+            <button onclick="closeModal('pvModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-4">JOYSOUND NOVA 公式コンセプトティザーPV</h3>
+            
+            <div class="aspect-video bg-black rounded-xl flex flex-col items-center justify-center border border-joyred/40 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-joyred/20 via-transparent to-joyaccent/20 animate-pulse"></div>
+                <i class="fa-solid fa-circle-play text-6xl text-joyred group-hover:scale-110 transition duration-300 z-10 cursor-pointer"></i>
+                <p class="text-sm font-orbitron text-gray-300 mt-4 z-10">JOYSOUND NOVA : THE FUTURE OF KARAOKE (0:45)</p>
+            </div>
+            
+            <p class="text-xs text-gray-400 mt-4">※音響体験にはイヤホンまたはハイレゾ対応スピーカーのご使用を推奨します。</p>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full p-6 rounded-2xl border border-white/20 relative">
+            <button onclick="closeModal('contactModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-2">導入資料請求・お問い合わせ</h3>
+            <p class="text-xs text-gray-400 mb-4">店舗オーナー様・施設経営者様向けに詳細資料をお送りします。</p>
+            
+            <form onsubmit="event.preventDefault(); alert('お問い合わせありがとうございました。（パロディ送信完了）'); closeModal('contactModal');" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-gray-300 mb-1">店舗名 / 貴社名</label>
+                    <input type="text" required placeholder="例: カラオケスタジオ NOVA" class="w-full bg-joydark border border-white/20 rounded p-2.5 text-white focus:outline-none focus:border-joyred">
+                </div>
+                <div>
+                    <label class="block text-gray-300 mb-1">ご担当者様お名前</label>
+                    <input type="text" required placeholder="山田 太郎" class="w-full bg-joydark border border-white/20 rounded p-2.5 text-white focus:outline-none focus:border-joyred">
+                </div>
+                <div>
+                    <label class="block text-gray-300 mb-1">メールアドレス</label>
+                    <input type="email" required placeholder="info@example.com" class="w-full bg-joydark border border-white/20 rounded p-2.5 text-white focus:outline-none focus:border-joyred">
+                </div>
+                <button type="submit" class="w-full bg-joyred hover:bg-joyred-light font-bold py-3 rounded-lg text-white mt-4">送信する</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Header Scroll Shadow
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('mainHeader');
+            if (window.scrollY > 50) {
+                header.classList.add('shadow-xl', 'bg-joydark/90');
+            } else {
+                header.classList.remove('shadow-xl', 'bg-joydark/90');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Modal Controls
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Hardware LED Color Switcher
+        function setLedColor(color) {
+            const unit = document.getElementById('hardwareUnit');
+            const nowPlaying = document.getElementById('nowPlayingText');
+            
+            unit.classList.remove('border-red-500', 'border-cyan-500', 'border-purple-500', 'border-amber-500');
+            
+            if(color === 'red') {
+                unit.style.borderColor = '#E60012';
+                nowPlaying.className = 'text-2xl sm:text-4xl font-bold text-white tracking-wider glow-red';
+            } else if(color === 'cyan') {
+                unit.style.borderColor = '#00F0FF';
+                nowPlaying.className = 'text-2xl sm:text-4xl font-bold text-white tracking-wider glow-cyan';
+            } else if(color === 'purple') {
+                unit.style.borderColor = '#A855F7';
+                nowPlaying.className = 'text-2xl sm:text-4xl font-bold text-purple-300 tracking-wider';
+            } else if(color === 'gold') {
+                unit.style.borderColor = '#F59E0B';
+                nowPlaying.className = 'text-2xl sm:text-4xl font-bold text-amber-300 tracking-wider';
+            }
+        }
+
+        // Animated Hardware Equalizer Bars
+        const eqContainer = document.getElementById('equalizerBars');
+        for(let i = 0; i < 20; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'w-1 bg-joyred rounded-t transition-all duration-150';
+            bar.style.height = Math.floor(Math.random() * 32 + 8) + 'px';
+            eqContainer.appendChild(bar);
+        }
+
+        setInterval(() => {
+            Array.from(eqContainer.children).forEach(bar => {
+                bar.style.height = Math.floor(Math.random() * 36 + 6) + 'px';
+            });
+        }, 150);
+
+        // Simulator Logic
+        const songs = [
+            { title: "アイドル / YOASOBI", pitch: "High", baseScore: 97.2 },
+            { title: "ドライフラワー / 優里", pitch: "Mid", baseScore: 98.4 },
+            { title: "新時代 / Ado", pitch: "Super High", baseScore: 96.8 }
+        ];
+        let currentSongIdx = 0;
+        let currentKey = 0;
+
+        function selectSong(index) {
+            currentSongIdx = index;
+            document.querySelectorAll('.song-btn').forEach((btn, idx) => {
+                if(idx === index) {
+                    btn.classList.add('border-joyred');
+                    btn.classList.remove('border-white/10');
+                } else {
+                    btn.classList.remove('border-joyred');
+                    btn.classList.add('border-white/10');
+                }
+            });
+        }
+
+        function changeKey(delta) {
+            if(delta === 0) currentKey = 0;
+            else currentKey += delta;
+            
+            const keyDisplay = document.getElementById('keyValue');
+            keyDisplay.innerText = currentKey > 0 ? `+${currentKey}` : currentKey;
+        }
+
+        function setBgTheme(themeName) {
+            const themeText = {
+                cyber: 'Cyberpunk Arena',
+                galaxy: 'Deep Galaxy',
+                sunset: 'Neon Sunset',
+                live: 'Dome Live Stadium'
+            };
+            document.getElementById('currentThemeDisplay').innerHTML = `現在の背景: <span class="text-white font-bold">${themeText[themeName]}</span>`;
+        }
+
+        function runSimulation() {
+            const btn = document.getElementById('startSimBtn');
+            const status = document.getElementById('simStatus');
+            const scoreDisplay = document.getElementById('simScoreDisplay');
+            const scoreText = document.getElementById('simScoreText');
+            
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            status.innerText = "AI 音声解析＆音響処理中...";
+            scoreDisplay.classList.add('hidden');
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 20;
+                if(progress >= 100) {
+                    clearInterval(interval);
+                    status.innerText = "採点完了！";
+                    
+                    const finalScore = (songs[currentSongIdx].baseScore + (Math.random() * 1.2 - 0.5)).toFixed(3);
+                    scoreText.innerText = finalScore;
+                    scoreDisplay.classList.remove('hidden');
+
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                }
+            }, 300);
+        }
+
+        // Background Particle Canvas
+        const canvas = document.getElementById('heroCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const particles = Array.from({ length: 45 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 2 + 1,
+            color: Math.random() > 0.5 ? '#E60012' : '#00F0FF',
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8
+        }));
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = p.color;
+                ctx.fill();
+            });
+            requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+    </script>
+</body>
+</html>
