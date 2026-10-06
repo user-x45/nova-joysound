@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOYSOUND NOVA (ジョイサウンド ノヴァ) | 次世代カラオケシステム公式</title>
+    <title>JOYSOUND NOVA (ジョイサウンド ノヴァ) | 次世代カラオケシステム【非公式パロディ】</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,12 +65,32 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #E60012;
         }
+        /* Disclaimer banner offset (height is measured by JS) */
+        :root { --banner-h: 40px; }
+        html { scroll-padding-top: var(--banner-h); }
     </style>
 </head>
-<body class="font-sans antialiased text-gray-100 selection:bg-joyred selection:text-white">
+<body class="font-sans antialiased text-gray-100 selection:bg-joyred selection:text-white" style="padding-top: var(--banner-h);">
+
+    <!-- Always-visible disclaimer + language switch -->
+    <div id="disclaimerBanner" role="note" class="fixed top-0 left-0 w-full z-[60] bg-amber-400 text-black shadow-lg">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 flex items-center gap-3">
+            <i class="fa-solid fa-triangle-exclamation text-base shrink-0"></i>
+            <p class="flex-1 text-[11px] sm:text-sm font-bold leading-snug">【ご注意】このサイトは本物（公式サイト）ではありません。パロディ・コンセプトデザインであり、JOYSOUND／株式会社エクシングとは一切関係ありません。</p>
+            <label class="shrink-0 flex items-center gap-1 text-xs font-medium">
+                <i class="fa-solid fa-globe"></i>
+                <span class="sr-only">Language / 言語</span>
+                <select id="langSelect" class="bg-white text-black border border-black/30 rounded px-1.5 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-black/50">
+                    <option value="auto">Auto / 自動</option>
+                    <option value="ja">日本語</option>
+                    <option value="en">English</option>
+                </select>
+            </label>
+        </div>
+    </div>
 
     <!-- Header Navigation -->
-    <header class="fixed top-0 left-0 w-full z-50 glass-panel border-b border-white/10 transition-all duration-300" id="mainHeader">
+    <header class="fixed left-0 w-full z-50 glass-panel border-b border-white/10 transition-all duration-300" id="mainHeader" style="top: var(--banner-h);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Brand Logo -->
             <a href="#" class="flex items-center space-x-3 group">
@@ -711,7 +731,7 @@
             <h3 class="text-xl font-bold text-white mb-2">導入資料請求・お問い合わせ</h3>
             <p class="text-xs text-gray-400 mb-4">店舗オーナー様・施設経営者様向けに詳細資料をお送りします。</p>
             
-            <form onsubmit="event.preventDefault(); alert('お問い合わせありがとうございました。（パロディ送信完了）'); closeModal('contactModal');" class="space-y-3 text-xs">
+            <form onsubmit="event.preventDefault(); alert(t('お問い合わせありがとうございました。（パロディ送信完了）')); closeModal('contactModal');" class="space-y-3 text-xs">
                 <div>
                     <label class="block text-gray-300 mb-1">店舗名 / 貴社名</label>
                     <input type="text" required placeholder="例: カラオケスタジオ NOVA" class="w-full bg-joydark border border-white/20 rounded p-2.5 text-white focus:outline-none focus:border-joyred">
@@ -830,6 +850,7 @@
                 live: 'Dome Live Stadium'
             };
             document.getElementById('currentThemeDisplay').innerHTML = `現在の背景: <span class="text-white font-bold">${themeText[themeName]}</span>`;
+            applyLang();
         }
 
         function runSimulation() {
@@ -840,7 +861,7 @@
             
             btn.disabled = true;
             btn.classList.add('opacity-50');
-            status.innerText = "AI 音声解析＆音響処理中...";
+            status.innerText = "AI 音声解析＆音響処理中..."; applyLang();
             scoreDisplay.classList.add('hidden');
 
             let progress = 0;
@@ -848,7 +869,7 @@
                 progress += 20;
                 if(progress >= 100) {
                     clearInterval(interval);
-                    status.innerText = "採点完了！";
+                    status.innerText = "採点完了！"; applyLang();
                     
                     const finalScore = (songs[currentSongIdx].baseScore + (Math.random() * 1.2 - 0.5)).toFixed(3);
                     scoreText.innerText = finalScore;
@@ -899,6 +920,222 @@
             requestAnimationFrame(drawParticles);
         }
         drawParticles();
+    </script>
+
+    <script>
+        // ===== i18n: auto-detect device language (ja -> Japanese, others -> English) + manual override =====
+        (function () {
+            const EN = {
+            "【ご注意】このサイトは本物（公式サイト）ではありません。パロディ・コンセプトデザインであり、JOYSOUND／株式会社エクシングとは一切関係ありません。": "NOTICE: This is NOT the official website. It is a parody / concept design and has no affiliation with JOYSOUND or XING Inc.",
+            "超・解像音響×生成AIカラオケ": "Ultra-high-resolution audio × generative AI karaoke",
+            "コンセプト": "Concept",
+            "革新機能": "Innovations",
+            "AI超・分析採点": "AI Ultra Analysis Scoring",
+            "体験シミュレーター": "Experience Simulator",
+            "スペック比較": "Spec Comparison",
+            "設置予定店舗": "Planned Locations",
+            "店舗オーナー様導入相談": "Store Owner Inquiries",
+            "設置予定店舗を探す": "Find Planned Locations",
+            "導入のお問い合わせ": "Inquire About Installation",
+            "JOYSOUND フラグシップ新機種 2027年春 誕生": "New JOYSOUND flagship model arrives Spring 2027",
+            "歌は、": "Singing, into ",
+            "超・空間体験": "an Ultra-Spatial Experience",
+            "へ。": ".",
+            "192kHz/32bitハイレゾ空間オーディオ ＆ リアルタイムAIステージビジュアライザー。": "192kHz/32-bit Hi-Res spatial audio & real-time AI stage visualizer.",
+            "「JOYSOUND NOVA」が、カラオケの常識をすべて過去にする。": "JOYSOUND NOVA makes every karaoke convention a thing of the past.",
+            "マイク音量": "Mic Volume",
+            "AIエコー": "AI Echo",
+            "キーコントロール": "Key Control",
+            "本体LEDカラー:": "Unit LED color:",
+            "ボタンを押して本体LEDカラーやデモ画面を体験できます": "Press the buttons to try the unit's LED colors and demo screen",
+            "AI採点＆サウンド試聴デモ": "AI Scoring & Sound Preview Demo",
+            "プロモーションPV再生": "Play Promo Video",
+            "なぜ、今「JOYSOUND NOVA」なのか": "Why JOYSOUND NOVA, and why now?",
+            "カラオケは「原曲に合わせて歌う場所」から「自分だけのライブステージを創り出す没入空間」へ。 長年培った音源技術と最先端AIが融合し、歌う人の歓びを極限まで引き出します。": "Karaoke is evolving from “a place to sing along to the original” into “an immersive space where you create your own live stage.” Long-cultivated audio technology fused with cutting-edge AI draws out the singer's joy to the fullest.",
+            "192kHz/32bit 超解像音源": "192kHz/32-bit Ultra-Resolution Audio",
+            "スタジオマスター音源レベルの密度。ヴォーカルの息づかい、生楽器の豊かな倍音まで再現する業界最高の「NOVA Sound Engine 2.0」を搭載。": "Studio-master-level density. Equipped with the industry's finest NOVA Sound Engine 2.0, reproducing every vocal breath and the rich overtones of live instruments.",
+            "AI音響・感性補正システム": "AI Acoustic & Sensibility Correction System",
+            "歌い手の声量・音域・部屋の残響特性をAIがマイクロ秒単位で自動調整。誰でもまるでプロアーティストのような抜けの良い歌声を実現。": "AI automatically adjusts the singer's volume, vocal range, and the room's reverb characteristics in microseconds, giving anyone a clear, projecting voice like a pro artist.",
+            "AI 3D空間映像ビジュアライザー": "AI 3D Spatial Video Visualizer",
+            "歌唱者の感情やピッチ、曲調に合わせて背景映像がリアルタイムで立体生成。歌詞の世界観に完全に包み込まれる新しい映像体験。": "Background visuals are generated in 3D in real time to match the singer's emotion, pitch, and the mood of the song. A new visual experience that fully envelops you in the world of the lyrics.",
+            "JOYSOUND NOVA 6つの新革新": "6 New Innovations of JOYSOUND NOVA",
+            "歌う、ハモる、つながる。すべての瞬間がエンターテインメントに進化。": "Sing, harmonize, connect. Every moment evolves into entertainment.",
+            "MyVoice クローン・デュエット": "MyVoice Clone Duet",
+            "過去のベストパフォーマンスやあなたの理想のハモリボイスをAIが生成。自分自身と本格ハモリデュエットが可能に。": "AI generates harmony voices from your past best performances or your ideal harmony voice, letting you sing a full-fledged harmony duet with yourself.",
+            "超低遅延「NOVA Connect」": "Ultra-Low-Latency “NOVA Connect”",
+            "全国のカラオケルームやご自宅のアプリと超低遅延でリンク。遠く離れた友達と同一空間でバンド＆デュエットセッション。": "Link with karaoke rooms nationwide and the app at home with ultra-low latency. Hold band and duet sessions with faraway friends as if in the same space.",
+            "曲数世界最多 38万曲以上搭載": "World's Largest Library: 380,000+ Songs",
+            "東方系、VTuber、ボーカロイド、インディーズからアニソン・洋楽まで。新曲もリリース当日に即時ハイレゾ配信。": "From Touhou, VTuber, and Vocaloid to indie, anime, and Western music. New releases are streamed in Hi-Res on release day.",
+            "プロモデル専用「NOVA DSP」": "Pro-Model Exclusive “NOVA DSP”",
+            "グラフィックEQやマイクゲインをスマホの「キョクナビアプリ」から直感調整。本格的なDTMマスタリング品質。": "Intuitively adjust graphic EQ and mic gain from the “Kyokunavi app” on your phone. Professional DTM mastering quality.",
+            "4K 120fps ライブ撮影機能": "4K 120fps Live Recording",
+            "ルーム内の広角カメラと連携。歌唱動画をスマホに即時転送し、SNSへそのまま4K高画質でシェア可能。": "Works with the in-room wide-angle camera. Instantly transfer your singing video to your phone and share it to social media in 4K quality.",
+            "推し活・ライブアリーナモード": "Fan Activity & Live Arena Mode",
+            "ペンライト型デバイスやルーム照明と連携し、東京ドーム級の演出や歓声サラウンドを完全再現。": "Syncs with glow-stick devices and room lighting to fully recreate Tokyo Dome-scale staging and surround cheering.",
+            "AI分析採点": "AI Analysis Scoring",
+            "従来の音程・抑揚の判定を超え、歌い手の「感情表現」「ビブラートの美しさ」「声質の倍音成分」「グルーヴ感」をAIが多次元解析。": "Beyond conventional pitch and intonation judgment, AI performs multidimensional analysis of the singer's “emotional expression,” “vibrato beauty,” “harmonic content of voice quality,” and “groove.”",
+            "表現力・グルーヴ AIグラフィック": "Expression & Groove AI Graphics",
+            "リズムのタメや走りをミクロ単位で追従し、プロレベルの「タメ効き」を適正判定。": "Tracks rhythmic lay-back and rushing at the micro level, accurately judging pro-level “lay-back” feel.",
+            "リアルタイムアドバイス音声アシスト": "Real-Time Advice Voice Assist",
+            "歌唱中にAIボイスが「今のAメロのビブラート、完璧です！」とリアルタイム褒めアシスト。": "While you sing, an AI voice praises you in real time: “That vibrato in the verse was perfect!”",
+            "全国ランク＆楽曲別「歌唱カルテ」": "National Ranking & Per-Song “Singing Chart”",
+            "採点終了後、スマホアプリにあなたの歌声の強みと克服ポイントの詳細レポートを送付。": "After scoring, a detailed report on your vocal strengths and areas to improve is sent to your smartphone app.",
+            "【課題曲】 怪獣の花唄 / Vaundy": "[Challenge Song] Kaijuu no Hanauta / Vaundy",
+            "全国第 3 位 / 14,290人中": "#3 nationwide / out of 14,290 singers",
+            "音程正確度": "Pitch Accuracy",
+            "表現力・感情": "Expression & Emotion",
+            "ビブラート質": "Vibrato Quality",
+            "グルーヴ感": "Groove",
+            "AI評: 「サビでの倍音成分が非常に豊かです。高音への抜け感がプロレベルの仕上がりです！」": "AI comment: “The harmonic content in the chorus is very rich. Your high notes ring out at a pro-level finish!”",
+            "NOVA サウンド＆AI採点 シミュレーター": "NOVA Sound & AI Scoring Simulator",
+            "曲を選択し、JOYSOUND NOVAの音響エフェクトやAI採点を画面上で疑似体験してください。": "Select a song and experience JOYSOUND NOVA's audio effects and AI scoring on screen.",
+            "デモ楽曲の選択": "Select a Demo Song",
+            "アイドル / YOASOBI": "Idol / YOASOBI",
+            "ドライフラワー / 優里": "Dried Flower / Yuuri",
+            "新時代 / Ado": "New Genesis / Ado",
+            "NOVA サウンドプロセッサー": "NOVA Sound Processor",
+            "AI Voice Clarity (ボーカル補正)": "AI Voice Clarity (Vocal Correction)",
+            "KEY コントロール": "KEY Control",
+            "現在の背景:": "Current background:",
+            "AI リアルタイム分析算出スコア": "AI Real-Time Analysis Score",
+            "AI演奏＆分析スタート": "Start AI Performance & Analysis",
+            "AI 音声解析＆音響処理中...": "Analyzing voice & processing audio with AI...",
+            "採点完了！": "Scoring complete!",
+            "従来の機種とのスペック比較": "Spec Comparison with Previous Models",
+            "JOYSOUND史上最強のスペックが生み出す圧倒的違い。": "An overwhelming difference created by the strongest specs in JOYSOUND history.",
+            "機能 / 項目": "Feature / Item",
+            "(本機 2027)": "(This model, 2027)",
+            "搭載曲数": "Song Library",
+            "約 34 万曲": "~340,000 songs",
+            "約 35.5 万曲": "~355,000 songs",
+            "38 万曲以上（業界最多）": "380,000+ songs (industry's largest)",
+            "音質 / サンプリング": "Sound Quality / Sampling",
+            "192kHz/32bit 超ハイレゾ 3D": "192kHz/32-bit Ultra Hi-Res 3D",
+            "採点エンジン": "Scoring Engine",
+            "分析採点マスター": "Analysis Scoring Master",
+            "AI超・分析採点 NOVA (感情・倍音解析)": "AI Ultra Analysis Scoring NOVA (emotion & harmonic analysis)",
+            "背景映像生成": "Background Video Generation",
+            "固定HD映像": "Fixed HD video",
+            "4K映像コンテンツ": "4K video content",
+            "リアルタイムAI 3D空間描画": "Real-time AI 3D spatial rendering",
+            "オンラインセッション": "Online Sessions",
+            "非対応": "Not supported",
+            "うたスキセッション": "Utasuki Session",
+            "超低遅延 NOVA Connect (最大16元中継)": "Ultra-low-latency NOVA Connect (up to 16-way relay)",
+            "マイク音声補正": "Mic Voice Correction",
+            "標準DSPエコー": "Standard DSP echo",
+            "ハイレゾイコライザ": "Hi-Res equalizer",
+            "AIリアルタイムボイスクローン/ハモリ生成": "AI real-time voice clone / harmony generation",
+            "周波数を解き放つ、最新周辺機器": "Latest Peripherals That Unleash Frequencies",
+            "キョクナビ NOVA": "Kyokunavi NOVA",
+            "12.9インチ有機EL液晶搭載。超高速レスポンスで曲検索・キー変更はもちろん、手元でAI採点の詳細アナリティクスを確認可能。": "Equipped with a 12.9-inch OLED display. With ultra-fast response, search songs and change keys, and check detailed AI scoring analytics right at hand.",
+            "ワイヤレスマイク NOVA-PRO": "Wireless Mic NOVA-PRO",
+            "超広帯域デジタル伝送ユニット。歌手の呼気音やハスキーな倍音まで余すことなく捉える超高感度コンデンサーヘッド採用。": "Ultra-wideband digital transmission unit. Features an ultra-sensitive condenser head that captures everything from breath sounds to husky overtones.",
+            "カラオケの未来を、あなたの店舗に。": "Bring the future of karaoke to your store.",
+            "2027年春より順次全国のカラオケ店舗・アミューズメント施設にて稼働開始予定。": "Scheduled to roll out at karaoke stores and amusement facilities nationwide from Spring 2027.",
+            "導入検討・見積依頼（店舗様向け）": "Installation Inquiry & Quote Request (for stores)",
+            "先行体験ロケテスト店舗一覧": "Early-Access Location Test Stores",
+            "© XING INC. All Rights Reserved. (※このWebサイトはパロディ・コンセプトデザインです)": "© XING INC. All Rights Reserved. (Note: This website is a parody / concept design)",
+            "先行体験・ロケテスト店舗": "Early-Access & Location Test Stores",
+            "以下の先行導入店舗にて「JOYSOUND NOVA」の試奏が可能です。": "You can try JOYSOUND NOVA at the following early-access stores.",
+            "JOYSOUND 渋谷南口駅前店 (先行設置)": "JOYSOUND Shibuya South Exit Station Front (early install)",
+            "東京都渋谷区道玄坂1-3-2 / NOVA ROOM 3室増設": "1-3-2 Dogenzaka, Shibuya, Tokyo / 3 additional NOVA ROOMs",
+            "JOYSOUND 心斎橋店": "JOYSOUND Shinsaibashi",
+            "大阪府大阪市中央区心斎橋筋1-5-6": "1-5-6 Shinsaibashi-suji, Chuo-ku, Osaka",
+            "JOYSOUND 名古屋太閤通口店": "JOYSOUND Nagoya Taikodori Exit",
+            "愛知県名古屋市中村区椿町15-2": "15-2 Tsubaki-cho, Nakamura-ku, Nagoya, Aichi",
+            "閉じる": "Close",
+            "JOYSOUND NOVA 公式コンセプトティザーPV": "JOYSOUND NOVA Concept Teaser PV",
+            "※音響体験にはイヤホンまたはハイレゾ対応スピーカーのご使用を推奨します。": "* For the best audio experience, we recommend earphones or Hi-Res-compatible speakers.",
+            "導入資料請求・お問い合わせ": "Request Installation Materials / Inquiries",
+            "店舗オーナー様・施設経営者様向けに詳細資料をお送りします。": "We will send detailed materials to store owners and facility operators.",
+            "店舗名 / 貴社名": "Store Name / Company Name",
+            "ご担当者様お名前": "Contact Person's Name",
+            "メールアドレス": "Email Address",
+            "送信する": "Submit",
+            "例: カラオケスタジオ NOVA": "e.g. Karaoke Studio NOVA",
+            "山田 太郎": "Taro Yamada",
+            "お問い合わせありがとうございました。（パロディ送信完了）": "Thank you for your inquiry. (Parody submission complete)"
+};
+            const TITLE = { ja: "JOYSOUND NOVA (ジョイサウンド ノヴァ) | 次世代カラオケシステム【非公式パロディ】", en: "JOYSOUND NOVA | Next-Generation Karaoke System [Unofficial Parody]" };
+            const STORE_KEY = 'siteLang';           // 'auto' | 'ja' | 'en'
+            const norm = s => s.replace(/\s+/g, ' ').trim();
+            const origText = new WeakMap();
+            const banner = document.getElementById('disclaimerBanner');
+            const sel = document.getElementById('langSelect');
+            let pref = 'auto';
+            let lang = 'ja';
+            try {
+                const saved = localStorage.getItem(STORE_KEY);
+                if (saved === 'auto' || saved === 'ja' || saved === 'en') pref = saved;
+            } catch (e) {}
+
+            function detect() {
+                const l = (navigator.languages && navigator.languages[0]) || navigator.language || 'en';
+                return /^ja/i.test(l) ? 'ja' : 'en';
+            }
+            function setBannerHeight() {
+                document.documentElement.style.setProperty('--banner-h', banner.offsetHeight + 'px');
+            }
+
+            // Translate a Japanese string at runtime (used by dynamic messages)
+            window.t = function (ja) {
+                const k = norm(ja);
+                return (lang === 'en' && EN[k]) || ja;
+            };
+
+            window.applyLang = function () {
+                lang = pref === 'auto' ? detect() : pref;
+                document.documentElement.lang = lang;
+                document.title = TITLE[lang];
+
+                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+                    acceptNode(n) {
+                        const p = n.parentNode && n.parentNode.nodeName;
+                        return (p === 'SCRIPT' || p === 'STYLE') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+                    }
+                });
+                const nodes = [];
+                while (walker.nextNode()) nodes.push(walker.currentNode);
+                nodes.forEach(n => {
+                    let orig = origText.get(n);
+                    if (orig === undefined) {
+                        if (!Object.prototype.hasOwnProperty.call(EN, norm(n.nodeValue))) return;
+                        orig = n.nodeValue;
+                        origText.set(n, orig);
+                    }
+                    if (lang === 'en') {
+                        const lead = orig.match(/^\s*/)[0];
+                        const trail = orig.match(/\s*$/)[0];
+                        n.nodeValue = lead + EN[norm(orig)] + trail;
+                    } else {
+                        n.nodeValue = orig;
+                    }
+                });
+
+                document.querySelectorAll('[placeholder]').forEach(el => {
+                    if (el.dataset.phJa === undefined) {
+                        if (!Object.prototype.hasOwnProperty.call(EN, norm(el.placeholder))) return;
+                        el.dataset.phJa = el.placeholder;
+                    }
+                    el.placeholder = lang === 'en' ? EN[norm(el.dataset.phJa)] : el.dataset.phJa;
+                });
+
+                sel.value = pref;
+                setBannerHeight();
+            };
+
+            sel.addEventListener('change', () => {
+                pref = sel.value;
+                try { localStorage.setItem(STORE_KEY, pref); } catch (e) {}
+                applyLang();
+            });
+            window.addEventListener('languagechange', () => { if (pref === 'auto') applyLang(); });
+            window.addEventListener('resize', setBannerHeight);
+            if ('ResizeObserver' in window) new ResizeObserver(setBannerHeight).observe(banner);
+
+            applyLang();
+        })();
     </script>
 </body>
 </html>
